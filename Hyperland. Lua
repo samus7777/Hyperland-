@@ -1,0 +1,220 @@
+-- ╔════════════════════════════════════════════════╗
+-- ║           HYPRLAND CONFIGURATION               ║
+-- ╚════════════════════════════════════════════════╝
+-- ╔════════════════════════════════════════════════╗
+-- ║  Configurado por:      fernudev                ║
+-- ║  GitHub:   https://github.com/Fernu292         ║
+-- ╚════════════════════════════════════════════════╝
+
+local hl = require("hyprland")
+
+-- ==================
+-- MONITOR
+-- ==================
+hl.monitor({
+    output   = "",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "auto",
+})
+
+-- ==================
+-- AUTOSTART
+-- ==================
+hl.exec_once("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+hl.exec_once("dbus-update-activation-environment --systemd --all")
+hl.exec_once("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+hl.exec_once("waybar")
+hl.exec_once("swww-daemon")
+hl.exec_once("hyprctl setcursor Bibata-Modern-Ice 12")
+
+-- ==================
+-- VARIABLES
+-- ==================
+local terminal    = "kitty"
+local fileManager = "nautilus"
+local menu        = "rofi -show drun"
+local browser     = "firefox"
+local mainMod     = "SUPER"
+
+-- ==================
+-- ENV VARS
+-- ==================
+hl.env("XCURSOR_SIZE", "24")
+hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
+hl.env("XDG_SESSION_TYPE", "wayland")
+hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+hl.env("QT_QPA_PLATFORM", "wayland;xcb")
+hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
+hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "0")
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+hl.env("MOZ_ENABLE_WAYLAND", "1")
+
+-- ==================
+-- INPUT
+-- ==================
+hl.input({
+    kb_layout    = "es",
+    follow_mouse = 1,
+    sensitivity  = 0.7,
+    touchpad = {
+        natural_scroll = true,
+    },
+})
+
+-- ==================
+-- GENERAL
+-- ==================
+hl.general({
+    gaps_in          = 5,
+    gaps_out         = 20,
+    border_size      = 2,
+    col_active_border   = "rgba(33ccffee) rgba(00ff99ee) 45deg",
+    col_inactive_border = "rgba(595959aa)",
+    resize_on_border = true,
+    layout           = "dwindle",
+    allow_tearing    = false,
+})
+
+-- ==================
+-- DECORATION
+-- ==================
+hl.decoration({
+    rounding = 5,
+    blur = {
+        enabled = false,
+        size    = 3,
+        passes  = 1,
+    },
+    drop_shadow         = true,
+    shadow_range        = 50,
+    shadow_render_power = 9,
+    col_shadow          = "rgba(0,0,0,0.6)",
+})
+
+-- ==================
+-- ANIMATIONS
+-- ==================
+hl.animations({
+    enabled = true,
+    beziers = {
+        { name = "myBezier", points = { 0.05, 0.9, 0.1, 1.05 } },
+    },
+    animations = {
+        { name = "windows",      speed = 7,  curve = "myBezier" },
+        { name = "windowsOut",   speed = 7,  curve = "default", style = "popin 80%" },
+        { name = "border",       speed = 10, curve = "default" },
+        { name = "borderangle",  speed = 8,  curve = "default" },
+        { name = "fade",         speed = 7,  curve = "default" },
+        { name = "workspaces",   speed = 6,  curve = "default" },
+    },
+})
+
+-- ==================
+-- LAYOUTS
+-- ==================
+hl.dwindle({
+    pseudotile     = true,
+    preserve_split = true,
+})
+
+hl.master({
+    new_is_master = true,
+})
+
+-- ==================
+-- GESTURES
+-- ==================
+hl.gestures({
+    workspace_swipe = true,
+})
+
+-- ==================
+-- MISC
+-- ==================
+hl.misc({
+    force_default_wallpaper = -1,
+    disable_hyprland_logo   = true,
+})
+
+-- ==================
+-- XWAYLAND
+-- ==================
+hl.xwayland({
+    force_zero_scaling = true,
+})
+
+-- ==================
+-- DEVICE
+-- ==================
+hl.device({
+    name        = "epic mouse V1",
+    sensitivity = -0.5,
+})
+
+-- ==================
+-- WINDOW RULES
+-- ==================
+hl.windowrulev2("stayfocused", { class = "Rofi" })
+hl.windowrulev2("forceinput",  { class = "Rofi" })
+hl.windowrulev2("float",       { class = "waypaper" })
+hl.windowrulev2("opacity 0.98 0.98", { class = "Code" })
+hl.windowrulev2("float",       { class = "float_kitty" })
+hl.windowrulev2("size 1450 800", { class = "float_kitty" })
+
+-- ==================
+-- KEYBINDINGS
+-- ==================
+hl.bind(mainMod .. " + Return",       hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + Alt + Return", hl.dsp.exec_cmd(terminal .. " --class float_kitty"))
+hl.bind(mainMod .. " + Q",            hl.dsp.window.close())
+hl.bind(mainMod .. " + M",            hl.dsp.exit())
+hl.bind(mainMod .. " + E",            hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + V",            hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + Space",        hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + P",            hl.dsp.window.pseudo())
+hl.bind(mainMod .. " + J",            hl.dsp.layout("togglesplit"))
+hl.bind(mainMod .. " + F",            hl.dsp.exec_cmd(browser))
+hl.bind(mainMod .. " + Shift + W",    hl.dsp.exec_cmd("waypaper"))
+
+-- Move focus
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+
+-- Switch workspaces
+for i = 1, 9 do
+    hl.bind(mainMod .. " + " .. i, hl.dsp.workspace(i))
+end
+hl.bind(mainMod .. " + 0", hl.dsp.workspace(10))
+
+-- Move window to workspace
+for i = 1, 9 do
+    hl.bind(mainMod .. " + Shift + " .. i, hl.dsp.move_to_workspace(i))
+end
+hl.bind(mainMod .. " + Shift + 0", hl.dsp.move_to_workspace(10))
+
+-- Volume
+hl.binde("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1"))
+hl.binde("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
+
+-- Brightness
+hl.bindel("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set +5%"))
+hl.bindel("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"))
+
+-- Screenshot
+hl.bind("Print", hl.dsp.exec_cmd("hyprshot -m output --clipboard-only"))
+
+-- Scratchpad
+hl.bind(mainMod .. " + S",         hl.dsp.toggle_special_workspace("magic"))
+hl.bind(mainMod .. " + Shift + S", hl.dsp.move_to_workspace("special:magic"))
+
+-- Scroll workspaces
+hl.bind(mainMod .. " + mouse_down", hl.dsp.workspace("e+1"))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.workspace("e-1"))
+
+-- Move/Resize with mouse
+hl.bindm(mainMod .. " + mouse:272", hl.dsp.window.move())
+hl.bindm(mainMod .. " + mouse:273", hl.dsp.window.resize())
